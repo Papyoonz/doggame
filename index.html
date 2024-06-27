@@ -73,14 +73,14 @@
         let timer;
 
         async function fetchGold() {
-            const response = await fetch(`/get_gold?user_id=${user_id}`);
+            const response = await fetch(`http://localhost:8080/get_gold?user_id=${user_id}`);
             const data = await response.json();
             gold = data.gold;
             updateDisplay();
         }
 
         async function updateGold() {
-            await fetch('/update_gold', {
+            await fetch('http://localhost:8080/update_gold', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
