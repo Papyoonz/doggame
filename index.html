@@ -72,21 +72,30 @@
         let gold = 0;
         let timer;
 
+        const PA_URL = 'https://<your-username>.pythonanywhere.com';  // PythonAnywhere URL'sini buraya girin
+
         async function fetchGold() {
-            const response = await fetch(`http://localhost:8080/get_gold?user_id=${user_id}`);
-            const data = await response.json();
-            gold = data.gold;
-            updateDisplay();
+            const response = await fetch(`${PA_URL}/get_gold?user_id=${user_id}`);
+            if (response.ok) {
+                const data = await response.json();
+                gold = data.gold;
+                updateDisplay();
+            } else {
+                console.error('Error fetching gold:', response.statusText);
+            }
         }
 
         async function updateGold() {
-            await fetch('http://localhost:8080/update_gold', {
+            const response = await fetch(`${PA_URL}/update_gold`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ user_id: user_id, gold: gold })
             });
+            if (!response.ok) {
+                console.error('Error updating gold:', response.statusText);
+            }
         }
 
         document.getElementById('dog').addEventListener('click', async () => {
@@ -138,3 +147,4 @@
     </script>
 </body>
 </html>
+
