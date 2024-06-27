@@ -62,21 +62,40 @@
         <div class="button" id="loadEnergy">enerji yükle</div>
     </div>
     <script>
-        // URL parametrelerinden kullanıcı adını al
+        // URL parametrelerinden kullanıcı adını ve user_id'yi al
         const urlParams = new URLSearchParams(window.location.search);
         const username = urlParams.get('username');
+        const user_id = urlParams.get('user_id');
         document.getElementById('playerName').textContent = username ? `Oyuncu ismi: ${username}` : 'Oyuncu ismi: Bilinmiyor';
 
         let energy = 100;
         let gold = 0;
         let timer;
 
-        document.getElementById('dog').addEventListener('click', () => {
+        async function fetchGold() {
+            const response = await fetch(`/get_gold?user_id=${user_id}`);
+            const data = await response.json();
+            gold = data.gold;
+            updateDisplay();
+        }
+
+        async function updateGold() {
+            await fetch('/update_gold', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: user_id, gold: gold })
+            });
+        }
+
+        document.getElementById('dog').addEventListener('click', async () => {
             if (energy > 0) {
                 let goldEarned = Math.floor(Math.random() * 10) + 1;
                 gold += goldEarned;
                 energy--;
                 updateDisplay();
+                await updateGold();
             }
         });
 
@@ -115,7 +134,7 @@
             return `${min}:${sec < 10 ? '0' : ''}${sec}`;
         }
 
-        updateDisplay();
+        fetchGold();
     </script>
 </body>
 </html>
